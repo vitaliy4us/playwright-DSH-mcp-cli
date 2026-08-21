@@ -1,0 +1,12 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# CLI / MCP session artifacts (accessibility snapshots, console logs)
+/.playwright-cli/
+/.playwright-mcp/
