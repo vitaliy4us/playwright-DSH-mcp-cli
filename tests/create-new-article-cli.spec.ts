@@ -14,8 +14,9 @@ test('Create a new article', async ({ page }) => {
   // 3. Enter email: "pwtest@test.com", enter password "Welcome2" and click Sign in button.
   //    User should be redirected to the home page. User should be logged in and the username
   //    should be displayed in the top right corner.
-  await page.getByRole('textbox', { name: 'Email' }).fill('pwtest@test.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('Welcome2');
+  // Credentials are read from the environment so the shared demo account is not baked into the test.
+  await page.getByRole('textbox', { name: 'Email' }).fill(process.env.CONDUIT_EMAIL ?? 'pwtest@test.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill(process.env.CONDUIT_PASSWORD ?? 'Welcome2');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(/^https:\/\/conduit\.bondaracademy\.com\/$/);
   await expect(page.locator('.navbar')).toContainText('pwtest');
@@ -62,11 +63,14 @@ test('Create a new article', async ({ page }) => {
     page.locator('.feed-toggle .nav-link.active').filter({ hasText: 'Your Feed' })
   ).toHaveCount(0);
 
-  const firstArticle = page.locator('.article-preview').first();
-  await expect(firstArticle.getByRole('heading', { name: articleTitle })).toBeVisible();
+  // The Global Feed is ordered by recency and this suite shares one account, so a test running in
+  // parallel can push its own article to the top. Assert on our article by title instead of relying
+  // on its position in the list (the manual test case assumed a single user working alone).
+  const feedArticle = page.locator('.article-preview').filter({ hasText: articleTitle });
+  await expect(feedArticle).toBeVisible();
 
   // 7. Click on this newly created article. Verify that the article details page is opened.
-  await firstArticle.getByRole('heading', { name: articleTitle }).click();
+  await feedArticle.getByRole('heading', { name: articleTitle }).click();
   await expect(page).toHaveURL(/\/article\//);
   await expect(page.getByRole('heading', { name: articleTitle })).toBeVisible();
   await expect(page.getByRole('button', { name: /Delete Article/ }).first()).toBeVisible();

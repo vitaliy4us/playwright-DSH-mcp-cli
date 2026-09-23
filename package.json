@@ -1,9 +1,14 @@
 {
-  "name": "playwright-dsh1",
+  "name": "playwright-dsh-mcp-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "The same Conduit test case automated twice - once through Playwright MCP and once through playwright-cli - for comparison.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
